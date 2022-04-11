@@ -3,6 +3,7 @@ require('dotenv').config();
 // LE SERVEUR EXPRESS
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 // ON IMPORT LES ROUTES
 const authRoute = require('./routes/auth');
@@ -20,6 +21,7 @@ db.once('open', () => {
     console.log('connecté a la base de données');
 });
 
+app.use(cors());
 
 // LE MIDDLEWARE DE L'API
 app.use(express.json());
