@@ -21,6 +21,7 @@ db.once('open', () => {
     console.log('connecté a la base de données');
 });
 
+
 app.use(cors());
 
 // LE MIDDLEWARE DE L'API
