@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const user = require('../model/user');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { route } = require('express/lib/application');
 
 
@@ -22,14 +23,17 @@ router.post('/user/register', async (req, res) => {
         const userExist = await user.findOne({ email: req.body.email });
         if (userExist) {
             return res.status(400).json({
-                error: 'un utilisateur utilise deja cette adresse email'
+                    error: 'un utilisateur utilise deja cette adresse email'
             });
         }
 
 
         // PERSIT LE USER DANS LA BDD
         const savedUser = await newUser.save();
-        return res.status(200).json(savedUser);
+        return res.status(200).json({
+            message: 'utilisateur enregistré avec succes',
+            user: savedUser
+        }); 
     }
     catch (err) {   
         console.log(err);
@@ -60,24 +64,29 @@ router.get('/users', async(req, res) => {
 
 });
 
+
+
 // ON VERIFIE SI LE USER EXIST POUR LE LOGIN
 router.post("/login", async (req, res) => {
     try {
-        const user = await user.findOne({ email: req.body.email });
-        if (!user) {
+        // CHECK SI L'EMAIL EXISTE
+        const test = await user.findOne({ email: req.body.email });
+
+
+        if (test == null) {
             return res.status(404).json({ 
                 message: "L'utilisateur n'a pas été trouvé"
             });
         }
+
+        // CHECK LE PASSWORD SI IL EST OK 
         const passwordIsValid = await bcrypt.compare(req.body.password, user.password);
         if (!passwordIsValid) {
             return res.status(401).json({
                 message: "mot de passe incorrect"
             });
         }
-        return res.status(200).json({
-            message: "l'utlisateur est connecté"
-        });
+        let token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
     }
     catch (err) {
         console.log(err);
