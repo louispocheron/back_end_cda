@@ -18,6 +18,15 @@ router.post('/user/register', async (req, res) => {
     
         });
 
+        // check if user already exist
+        const userExist = await user.findOne({ email: req.body.email });
+        if (userExist) {
+            return res.status(400).json({
+                error: 'un utilisateur utilise deja cette adresse email'
+            });
+        }
+
+
         // PERSIT LE USER DANS LA BDD
         const savedUser = await newUser.save();
         return res.status(200).json(savedUser);
@@ -50,6 +59,33 @@ router.get('/users', async(req, res) => {
     }
 
 });
+
+// ON VERIFIE SI LE USER EXIST POUR LE LOGIN
+router.post("/login", async (req, res) => {
+    try {
+        const user = await user.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).json({ 
+                message: "L'utilisateur n'a pas été trouvé"
+            });
+        }
+        const passwordIsValid = await bcrypt.compare(req.body.password, user.password);
+        if (!passwordIsValid) {
+            return res.status(401).json({
+                message: "mot de passe incorrect"
+            });
+        }
+        return res.status(200).json({
+            message: "l'utlisateur est connecté"
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send(err)
+    }
+});
+
+
 
 router.get('/users/:id', async(req, res) => {
     try {
