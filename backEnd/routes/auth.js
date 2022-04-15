@@ -71,8 +71,6 @@ router.post("/login", async (req, res) => {
     try {
         // CHECK SI L'EMAIL EXISTE
         const test = await user.findOne({ email: req.body.email });
-
-
         if (test == null) {
             return res.status(404).json({ 
                 message: "L'utilisateur n'a pas été trouvé"
@@ -80,14 +78,18 @@ router.post("/login", async (req, res) => {
         }
 
         // CHECK LE PASSWORD SI IL EST OK 
-        const passwordIsValid = await bcrypt.compare(req.body.password, user.password);
-        if (!passwordIsValid) {
+        if(!bcrypt.compareSync(req.body.password, test.password)) {
             return res.status(401).json({
-                message: "mot de passe incorrect"
+                message: "Mot de passe incorrect"
             });
         }
         let token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
+        return res.status(200).json({
+            message: "Vous etes connecté",
+            token: token
+        });
     }
+    
     catch (err) {
         console.log(err);
         res.status(500).send(err)
