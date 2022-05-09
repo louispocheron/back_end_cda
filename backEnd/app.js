@@ -34,11 +34,6 @@ app.use('/api', commentaireRoute);
 
 
 
-
-
-
-
-
 app.listen('3500' , () => {
     console.log('server is running on port 3500');
 });

@@ -21,9 +21,15 @@ router.post('/user/register', async (req, res) => {
 
         // check if user already exist
         const userExist = await user.findOne({ email: req.body.email });
+        const nameExist = await user.findOne({ name: req.body.name });
         if (userExist) {
             return res.status(400).json({
                     error: 'un utilisateur utilise deja cette adresse email'
+            });
+        }
+        if (nameExist) {
+            return res.status(400).json({
+                    error: 'un utilisateur utilise deja ce nom'
             });
         }
 
@@ -52,6 +58,8 @@ router.delete('/user/delete/:id', async (req, res) => {
     }
 });
 
+
+// GET ALL USERS
 router.get('/users', async(req, res) => {
     try {
         const allUsers = await user.find();
