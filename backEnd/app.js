@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-
+const fileUpload = require('express-fileupload')
 // ON IMPORT LES ROUTES
 const authRoute = require('./routes/auth');
 const imageRoute = require('./routes/imageRoute');
@@ -26,7 +26,9 @@ app.use(cors());
 
 // LE MIDDLEWARE DE L'API
 app.use(express.json());
-
+app.use(fileUpload({
+    createParentPath: true
+}));
 
 app.use('/api', authRoute);
 app.use('/api', imageRoute);

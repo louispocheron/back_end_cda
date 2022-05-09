@@ -1,23 +1,24 @@
 const router = require('express').Router();
+const images = require('../model/images');
 const {
  image, commentaire
 } =  require('../model/images');
 
 
 router.post('/images', async (req, res) => {
-    const newImage = new image({
-        name: req.body.name,
-        description: req.body.description,
+    console.log(req.file);
+    const newImage = await new images({
         });
+
         try {
+
             const savedImage = await newImage.save();
             res.send(savedImage);
-
             }
             catch (err) {
                 console.log(err);
                 res.status(400).send(err);
-                }
+            }
 });
 
 // CHOPER TOUTES LES IMAGES
