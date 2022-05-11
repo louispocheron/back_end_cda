@@ -17,6 +17,10 @@ const imageSchema = new mongoose.Schema({
         min: 3,
         max: 1000
     },
+    // img: {
+    //     data: Buffer,
+    //     contentType: String
+    // },
     posted_at: {
         type: Date,
         default: Date.now

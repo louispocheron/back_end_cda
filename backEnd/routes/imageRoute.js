@@ -1,17 +1,18 @@
 const router = require('express').Router();
 const images = require('../model/images');
-const {
- image, commentaire
-} =  require('../model/images');
 
 
 router.post('/images', async (req, res) => {
-    console.log(req.file);
+    console.log(req.files);
+
+    // SAVE FILE HERE
+    // md5 save file
+    
+
     const newImage = await new images({
+            name: req.files.Image.name,
         });
-
         try {
-
             const savedImage = await newImage.save();
             res.send(savedImage);
             }
@@ -24,7 +25,7 @@ router.post('/images', async (req, res) => {
 // CHOPER TOUTES LES IMAGES
 router.get('/images', async (req, res) => {
     try {
-        const allImages = await image.find();
+        const allImages = await images.find();
         res.send(allImages);
     }
     catch (err) {
@@ -54,6 +55,16 @@ router.delete('/images/:id', async (req, res) => {
         res.status(400).send(err)
     }
 });
+
+// router.delete('/images/delete/all', async (req, res) => {
+//     try {
+//         const deletedImage = await image.findAllandDelete();
+//         return res.send.json(deletedImage);
+//     }
+//     catch (err) {
+//         res.status(400).send(err)
+//     }
+// });
 
 // UPDATE UNE IMAGE
 router.put('/images/:id', async (req, res) => {

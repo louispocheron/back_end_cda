@@ -26,8 +26,11 @@ app.use(cors());
 
 // LE MIDDLEWARE DE L'API
 app.use(express.json());
+
+
 app.use(fileUpload({
-    createParentPath: true
+    limits: { fileSize: 50 * 1024 * 1024 },
+    abortOnLimit: true
 }));
 
 app.use('/api', authRoute);
