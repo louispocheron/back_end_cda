@@ -1,16 +1,36 @@
 const router = require('express').Router();
 const images = require('../model/images');
+// const multer = require('multer');
+const path = require('path');
+const fs = require("fs")
+
+
+
+// const storage = multer.diskStorage({
+
+//     destination: (req, file, cb) => {
+//         cb(null, '../public/images');
+//     },
+//     filename: (req, file, cb) => {
+//         console.log(file);
+//         cb(null, path.extname(file.originalname));
+//     }
+// })
+
+// const upload = multer ({
+//     storage: storage
+// })
+
 
 
 router.post('/images', async (req, res) => {
-    console.log(req.files);
-
-    // SAVE FILE HERE
-    // md5 save file
-    
-
+    fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
+        if(err){
+            console.log(err)
+        }
+    });
     const newImage = await new images({
-            name: req.files.Image.name,
+            name: req.files.file.name,
         });
         try {
             const savedImage = await newImage.save();
@@ -36,13 +56,39 @@ router.get('/images', async (req, res) => {
 // CHOPER UNE IMAGE PAR ID
 router.get('/images/:id', async (req, res) => {
     try {
-        const oneImage = await image.findById(req.params.id);
+        const oneImage = await images.findById(req.params.id);
         res.send(oneImage);
     }
     catch (err) {
         res.status(400).send(err);
     }
 });
+
+//SOURCE UNE IMAGE
+router.get('/srcImage/:id', async(req, res)=>{
+    try {
+        const oneImage = await images.findById(req.params.id);
+        let image = fs.readFileSync('./public/images/' + oneImage.name);
+        res.contentType('image/jpg');
+        res.send(image);
+    }
+    catch (err) {
+        res.status(400).send(err);
+    }
+})
+
+
+router.get('/srcImage/', async(req, res)=>{
+    try {
+        const oneImage = await images.find();
+        let image = fs.readFileSync('./public/images/' + oneImage.name);
+        res.contentType('image/jpg');
+        res.send(image);
+    }
+    catch (err) {
+        res.status(400).send(err);
+    }
+})
 
 
 // DELETE UNE IMAGE
@@ -51,6 +97,7 @@ router.delete('/images/:id', async (req, res) => {
         const deletedImage = await image.findByIdAndDelete(req.params.id);
         return res.send.json(deletedImage);
     }
+    
     catch (err) {
         res.status(400).send(err)
     }

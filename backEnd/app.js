@@ -5,10 +5,13 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const fileUpload = require('express-fileupload')
+const path = require('path');
+
 // ON IMPORT LES ROUTES
 const authRoute = require('./routes/auth');
 const imageRoute = require('./routes/imageRoute');
 const commentaireRoute = require('./routes/commentaireRoute');
+
 
 
 
@@ -32,6 +35,8 @@ app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
     abortOnLimit: true
 }));
+
+
 
 app.use('/api', authRoute);
 app.use('/api', imageRoute);
