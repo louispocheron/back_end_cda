@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js", 
+    "test": "mocha --timeout 10000"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.0",
+    "mocha": "^10.0.0",
     "nodemon": "^2.0.15"
   }
 }

@@ -53,7 +53,7 @@ router.get('/images', async (req, res) => {
     }
 });
 
-// CHOPER UNE IMAGE PAR ID
+// CHOPER LES DONNEES D'UNE IMAGE
 router.get('/images/:id', async (req, res) => {
     try {
         const oneImage = await images.findById(req.params.id);
@@ -78,17 +78,17 @@ router.get('/srcImage/:id', async(req, res)=>{
 })
 
 
-router.get('/srcImage/', async(req, res)=>{
-    try {
-        const oneImage = await images.find();
-        let image = fs.readFileSync('./public/images/' + oneImage.name);
-        res.contentType('image/jpg');
-        res.send(image);
-    }
-    catch (err) {
-        res.status(400).send(err);
-    }
-})
+// router.get('/srcImage/', async(req, res)=>{
+//     try {
+//         const oneImage = await images.find();
+//         let image = fs.readFileSync('./public/images/' + oneImage.name);
+//         res.contentType('image/jpg');
+//         res.send(image);
+//     }
+//     catch (err) {
+//         res.status(400).send(err);
+//     }
+// })
 
 
 // DELETE UNE IMAGE
@@ -97,7 +97,7 @@ router.delete('/images/:id', async (req, res) => {
         const deletedImage = await image.findByIdAndDelete(req.params.id);
         return res.send.json(deletedImage);
     }
-    
+
     catch (err) {
         res.status(400).send(err)
     }
