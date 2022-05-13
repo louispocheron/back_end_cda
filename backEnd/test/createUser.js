@@ -25,7 +25,7 @@ describe("Creation d'un utilisateur dans un Document NoSql", () => {
     it("devrait créer un utilisateur", () => {
         const newUser = new user({
             name: 'test',
-            email: "{}",
+            email: "Unittest@gmail.com",
             password: 'test'
         });
         newUser.save()
