@@ -2,7 +2,7 @@ const router = require('express').Router();
 const images = require('../model/images');
 // const multer = require('multer');
 const path = require('path');
-const fs = require("fs")
+const fs = require("fs");
 
 
 
@@ -57,19 +57,20 @@ router.get('/images', async (req, res) => {
 router.get('/images/:id', async (req, res) => {
     try {
         const oneImage = await images.findById(req.params.id);
-        res.send(oneImage);
     }
     catch (err) {
         res.status(400).send(err);
     }
 });
 
+
 //SOURCE UNE IMAGE
 router.get('/srcImage/:id', async(req, res)=>{
     try {
         const oneImage = await images.findById(req.params.id);
         let image = fs.readFileSync('./public/images/' + oneImage.name);
-        res.contentType('image/jpg');
+        const type = path.extname(oneImage.name);
+        res.contentType(type);  
         res.send(image);
     }
     catch (err) {
@@ -77,18 +78,16 @@ router.get('/srcImage/:id', async(req, res)=>{
     }
 })
 
-
-// router.get('/srcImage/', async(req, res)=>{
-//     try {
-//         const oneImage = await images.find();
-//         let image = fs.readFileSync('./public/images/' + oneImage.name);
-//         res.contentType('image/jpg');
-//         res.send(image);
-//     }
-//     catch (err) {
-//         res.status(400).send(err);
-//     }
-// })
+// CHOPE TOUTES LES IMAGES
+router.get('/srcImage', async(req, res)=>{
+    try {
+        const oneImage = await images.find();
+        console.log(oneImage);
+        }
+    catch (err) {
+        res.status(400).send(err);
+    }
+})
 
 
 // DELETE UNE IMAGE
