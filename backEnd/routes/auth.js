@@ -33,7 +33,6 @@ router.post('/user/register', async (req, res) => {
             });
         }
 
-
         // PERSIT LE USER DANS LA BDD
         const savedUser = await newUser.save();
         return res.status(200).json({

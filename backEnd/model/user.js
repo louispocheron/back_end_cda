@@ -36,8 +36,10 @@ const userSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
-    }
-
+    },
+    images: [
+        {type: mongoose.Schema.Types.ObjectId, ref: 'images'}
+        ]
 }, 
     { timestamps: true }
 );

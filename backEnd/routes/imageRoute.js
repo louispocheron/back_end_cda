@@ -26,11 +26,14 @@ const fs = require("fs");
 router.post('/images', async (req, res) => {
     fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
         if(err){
-            console.log(err)
+            console.log(err);
         }
     });
+    console.log(req.files);
     const newImage = await new images({
             name: req.files.file.name,
+            // user: id
+            // user: req.body.user
         });
         try {
             const savedImage = await newImage.save();
@@ -41,6 +44,9 @@ router.post('/images', async (req, res) => {
                 res.status(400).send(err);
             }
 });
+
+
+
 
 // CHOPER TOUTES LES IMAGES
 router.get('/images', async (req, res) => {
