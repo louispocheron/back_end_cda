@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const user = require('../model/user');
+const UserModel = require('../model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { route } = require('express/lib/application');
@@ -12,7 +12,7 @@ router.post('/user/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-        const newUser = await new user({
+        const newUser = await new UserModel({
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword
@@ -20,8 +20,8 @@ router.post('/user/register', async (req, res) => {
         });
 
         // check if user already exist
-        const userExist = await user.findOne({ email: req.body.email });
-        const nameExist = await user.findOne({ name: req.body.name });
+        const userExist = await UserModel.findOne({ email: req.body.email });
+        const nameExist = await UserModel.findOne({ name: req.body.name });
         if (userExist) {
             return res.status(400).json({
                     error: 'un utilisateur utilise deja cette adresse email'
@@ -48,7 +48,7 @@ router.post('/user/register', async (req, res) => {
 
 router.delete('/user/delete/:id', async (req, res) => {
     try {
-        const deletedUser = await user.findByIdAndDelete(req.params.id);
+        const deletedUser = await UserModel.findByIdAndDelete(req.params.id);
         return res.status(200).json(deletedUser);
     }
     catch (err) {
@@ -61,7 +61,7 @@ router.delete('/user/delete/:id', async (req, res) => {
 // GET ALL USERS
 router.get('/users', async(req, res) => {
     try {
-        const allUsers = await user.find();
+        const allUsers = await UserModel.find();
         return res.status(200).json(allUsers);
     }
     catch (err) {
@@ -77,20 +77,20 @@ router.get('/users', async(req, res) => {
 router.post("/login", async (req, res) => {
     try {
         // CHECK SI L'EMAIL EXISTE
-        const test = await user.findOne({ email: req.body.email });
-        if (test == null) {
+        const user = await UserModel.findOne({ email: req.body.email });
+        if (user == null) {
             return res.status(404).json({ 
                 message: "L'utilisateur n'a pas été trouvé"
             });
         }
 
         // CHECK LE PASSWORD SI IL EST OK 
-        if(!bcrypt.compareSync(req.body.password, test.password)) {
+        if(!bcrypt.compareSync(req.body.password, user.password)) {
             return res.status(401).json({
                 message: "Mot de passe incorrect"
             });
         }
-        let token = jwt.sign({ id: user._id }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
+        let token = jwt.sign({ id: user._id.toString() }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
         return res.status(200).json({
             message: "Vous etes connecté",
             token: token
@@ -105,9 +105,9 @@ router.post("/login", async (req, res) => {
 
 
 
-router.get('/users/:id', async(req, res) => {
+router.get('/user/:id', async(req, res) => {
     try {
-        const oneUser = await user.findById(req.params.id);
+        const oneUser = await UserModel.findById(req.params.id);
         return res.status(200).json(oneUser);
         }
         catch (err) {

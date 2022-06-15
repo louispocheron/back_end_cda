@@ -6,6 +6,7 @@ const app = express();
 const cors = require('cors');
 const fileUpload = require('express-fileupload')
 const path = require('path');
+const checkTokenMiddleware  = require('./token')
 
 // ON IMPORT LES ROUTES
 const authRoute = require('./routes/auth');
@@ -26,21 +27,18 @@ db.once('open', () => {
 
 
 app.use(cors());
-
 // LE MIDDLEWARE DE L'API
 app.use(express.json());
-
-
 app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
     abortOnLimit: true
 }));
 
-
-
+// PAS POUR LE LOGIN CAR ON A PAS DE TOKEN AVANT 
 app.use('/api', authRoute);
+
 app.use('/api', imageRoute);
-app.use('/api', commentaireRoute);
+app.use('/api', checkTokenMiddleware, commentaireRoute);
 
 
 

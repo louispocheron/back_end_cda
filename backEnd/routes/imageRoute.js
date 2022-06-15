@@ -1,8 +1,11 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
 const images = require('../model/images');
 // const multer = require('multer');
 const path = require('path');
 const fs = require("fs");
+const checkTokenMiddleware  = require('../token')
+
 
 
 
@@ -23,16 +26,16 @@ const fs = require("fs");
 
 
 
-router.post('/images', async (req, res) => {
+router.post('/images', checkTokenMiddleware,  async (req, res) => {
     fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
         if(err){
             console.log(err);
         }
     });
-    console.log(req.files);
+    console.log(req.user);
     const newImage = await new images({
             name: req.files.file.name,
-            // user: id
+            user: mongoose.Types.ObjectId(req.user.id)
             // user: req.body.user
         });
         try {
@@ -46,6 +49,18 @@ router.post('/images', async (req, res) => {
 });
 
 
+// get all images from one given user
+router.get('/images/user/:id', checkTokenMiddleware, async (req, res) => {
+    try {
+        const imageUser = await images.find({user: req.user.id});
+        console.log(imageUser);
+        // res.send(imageUser);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+});
 
 
 // CHOPER TOUTES LES IMAGES
