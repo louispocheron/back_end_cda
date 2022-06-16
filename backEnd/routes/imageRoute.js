@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const images = require('../model/images');
+const user = require('../model/user');
 // const multer = require('multer');
 const path = require('path');
 const fs = require("fs");
@@ -27,6 +28,7 @@ const checkTokenMiddleware  = require('../token')
 
 
 router.post('/images', checkTokenMiddleware,  async (req, res) => {
+    console.log(req.files.file)
     fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
         if(err){
             console.log(err);
@@ -40,6 +42,7 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
         });
         try {
             const savedImage = await newImage.save();
+            const imageId = user.findOneAndUpdate({ _id: req.user.id }, { $push: { images: savedImage._id } },);
             res.send(savedImage);
             }
             catch (err) {
@@ -50,11 +53,14 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
 
 
 // get all images from one given user
-router.get('/images/user/:id', checkTokenMiddleware, async (req, res) => {
+router.get('/images/user/:id', async (req, res) => {
+    console.log("areazfrez")
+    console.log(req.params.id);
     try {
-        const imageUser = await images.find({user: req.user.id});
-        console.log(imageUser);
-        // res.send(imageUser);
+        // FF GO NEXT
+        const imageUser = await user.findById(req.params.id).populate('images');
+        console.log(imageUser.images);
+        res.send(imageUser);
     }
     catch (err) {
         console.log(err);

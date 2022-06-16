@@ -37,9 +37,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    images: [
-        {type: mongoose.Schema.Types.ObjectId, ref: 'images'}
-        ]
+    images: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'images'
+    }]
 }, 
     { timestamps: true }
 );
