@@ -28,7 +28,6 @@ const checkTokenMiddleware  = require('../token')
 
 
 router.post('/images', checkTokenMiddleware,  async (req, res) => {
-    console.log(req.files.file)
     fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
         if(err){
             console.log(err);
@@ -40,9 +39,14 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
             user: mongoose.Types.ObjectId(req.user.id)
             // user: req.body.user
         });
+    const updateUser = await user.findByIdAndUpdate(req.user.id, {
+        $push: {
+            images: newImage.id
+        }
+    });
         try {
             const savedImage = await newImage.save();
-            const imageId = user.findOneAndUpdate({ _id: req.user.id }, { $push: { images: savedImage._id } },);
+            const savedUser = await updateUser.save();
             res.send(savedImage);
             }
             catch (err) {
@@ -51,29 +55,48 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
             }
 });
 
+router.get('images/user/:id', async (req, res) => {
+    console.log('salut bg');
+    const userImages = await images.find({user: req.params.id});
+    res.send(userImages);
+});
+
+
+
 
 // get all images from one given user
-router.get('/images/user/:id', async (req, res) => {
-    console.log("areazfrez")
-    console.log(req.params.id);
-    try {
-        // FF GO NEXT
-        const imageUser = await user.findById(req.params.id).populate('images');
-        console.log(imageUser.images);
-        res.send(imageUser);
-    }
-    catch (err) {
-        console.log(err);
-        res.status(400).send(err);
-    }
-});
+// router.get('/images/user/:id', async (req, res) => {
+//     // console.log("areazfrez")
+//     console.log(req.params.id);
+//     try {
+//         // FF GO NEXT
+//         const imageUser = await user.findById(req.params._id).populate('images');
+//         console.log(imageUser.images);
+//         res.send(imageUser);
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(400).send(err);
+//     }
+// });
+
+// router.ger('/image/user/:id', async (req, res) => {
+//     try {
+//         const imageUser = await images.);
+//         res.send(imageUser);
+//     }
+//     catch (err) {
+//         console.log(err);
+//         res.status(400).send(err);
+//     }
+// });
 
 
 // CHOPER TOUTES LES IMAGES
 router.get('/images', async (req, res) => {
     try {
-        const allImages = await images.find();
-        res.send(allImages);
+        const AllImageUser = await images.find().populate('user');
+        res.send(AllImageUser);
     }
     catch (err) {
         res.status(400).send(err);

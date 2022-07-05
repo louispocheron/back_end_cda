@@ -58,6 +58,19 @@ router.delete('/user/delete/:id', async (req, res) => {
 });
 
 
+// GET ALL IMAGE FROM A CERTAIN USER
+router.get('/user/images/profil/:id', async (req, res) => {
+    try {
+        const userImages = await UserModel.findById(req.params.id).populate('images');
+        const image = userImages.images
+        return res.status(200).json(image);
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).send(err)
+    }
+});
+
 // GET ALL USERS
 router.get('/users', async(req, res) => {
     try {
@@ -68,7 +81,6 @@ router.get('/users', async(req, res) => {
         console.log(err);
         res.status(500).send(err)
     }
-
 });
 
 
