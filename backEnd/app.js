@@ -36,9 +36,8 @@ app.use(fileUpload({
 
 // PAS POUR LE LOGIN CAR ON A PAS DE TOKEN AVANT 
 app.use('/api', authRoute);
-
 app.use('/api', imageRoute);
-app.use('/api', checkTokenMiddleware, commentaireRoute);
+app.use('/api', commentaireRoute);
 
 
 

@@ -1,36 +1,38 @@
 const router = require('express').Router();
+const mongoose = require('mongoose');
+const images = require('../model/images');
+// const { default: mongoose } = require('mongoose');
 const commentaire = require('../model/commentaire');
+const checkTokenMiddleware  = require('../token')
 
 
-// POST UN COMMENTAIRE
-router.post('image/commentaires', async (req, res) => {
-    const newCommentaire = new commentaire({
+
+
+// POST A COMMENT ON AN IMAGE
+router.post('/commentaire/:imageId', async (req, res) => {
+    console.log(req.body.user);
+    const newCommentaire = await new commentaire({
         commentaire: req.body.commentaire,
-        posted_at: req.body.posted_at,
         user: req.body.user,
-        image: req.body.image
+        image: mongoose.Types.ObjectId(req.params.imageId)
     });
-    try{
+    const updateImage = await images.findByIdAndUpdate(req.params.imageId, {
+        $push: {
+            commentaire: newCommentaire.id
+        }
+    });
+    try {
         const savedCommentaire = await newCommentaire.save();
+        const savedImage = await updateImage.save();
         res.send(savedCommentaire);
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         res.status(400).send(err);
     }
 });
 
-// TOUT LES COMMENTAIRES DE L'IMAGE
-router.get('/commentaires', async (req, res) => {
-    try{
-        const allCommentaires = await commentaire.find();
-        res.send(allCommentaires);
-    }
-    catch(err){
-        console.log(err);
-        res.status(400).send(err);
-    }
-});
+
 
 // CHOPER UN COMMENTAIRE PAR ID
 router.get('/commentaires/:id', async (req, res) => {
@@ -70,6 +72,13 @@ router.put('/commentaires/:id', async (req, res) => {
         console.log(err)
         res.status(400).send(err);
     }
+});
+
+
+// CHERCHE TOUT LES COMMENTAIRES D'UNE IMAGE DONNEE
+router.get('/commentaires/image/:id', async (req, res) => {
+    const coms = await images.findById(req.params.id).populate('commentaires');
+    res.send(coms);
 });
 
 

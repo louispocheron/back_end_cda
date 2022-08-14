@@ -12,12 +12,13 @@ const extractBearerToken = headerValue => {
 
 /* Vérification du token */
 const checkTokenMiddleware = (req, res, next) => {
-    // Récupération du token
+    // Récupération du 
+    console.log(req.headers);
     const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
 
     // Présence d'un token
     if (!token) {
-        return res.status(401).json({ message: 'Error. Need a token' })
+        return res.status(401).json({ message: 'Besoin d"un token batard' })
     }
 
     // Véracité du token

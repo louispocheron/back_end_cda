@@ -105,10 +105,11 @@ router.post("/login", async (req, res) => {
         let token = jwt.sign({ id: user._id.toString() }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
         return res.status(200).json({
             message: "Vous etes connecté",
-            token: token
+            token: token,
+            userId: user._id
         });
     }
-    
+        
     catch (err) {
         console.log(err);
         res.status(500).send(err)
@@ -117,16 +118,17 @@ router.post("/login", async (req, res) => {
 
 
 
-router.get('/user/:id', async(req, res) => {
+router.get('/user/test/:id', async(req, res) => {
     try {
-        const oneUser = await UserModel.findById(req.params.id);
-        return res.status(200).json(oneUser);
+        const oneUser = await UserModel.findOne({ _id: req.params.id });
+        res.send(oneUser);
         }
         catch (err) {
             console.log(err);
             res.status(500).send(err)
         }
 });
+
             
 
 

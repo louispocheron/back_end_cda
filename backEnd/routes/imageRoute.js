@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const images = require('../model/images');
+const commentaires = require('../model/commentaire');
 const user = require('../model/user');
 // const multer = require('multer');
 const path = require('path');
@@ -33,7 +34,7 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
             console.log(err);
         }
     });
-    console.log(req.user);
+    // console.log(checkTokenMiddleware);
     const newImage = await new images({
             name: req.files.file.name,
             user: mongoose.Types.ObjectId(req.user.id)
@@ -55,41 +56,20 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
             }
 });
 
-router.get('images/user/:id', async (req, res) => {
-    console.log('salut bg');
-    const userImages = await images.find({user: req.params.id});
-    res.send(userImages);
+
+// CHOPE TOUT LES COMMENTAIRES D'UNE IMAGE
+router.get('/image/commentaires/:id', async (req, res) => {
+    try{
+        const commentaireImage = await images.findById(req.params.id).populate('commentaires')
+        const allCommentairesImage = await commentaireImage.commentaires;
+        return res.status(200).json(allCommentairesImage);
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).send(err);
+    }
 });
 
-
-
-
-// get all images from one given user
-// router.get('/images/user/:id', async (req, res) => {
-//     // console.log("areazfrez")
-//     console.log(req.params.id);
-//     try {
-//         // FF GO NEXT
-//         const imageUser = await user.findById(req.params._id).populate('images');
-//         console.log(imageUser.images);
-//         res.send(imageUser);
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(400).send(err);
-//     }
-// });
-
-// router.ger('/image/user/:id', async (req, res) => {
-//     try {
-//         const imageUser = await images.);
-//         res.send(imageUser);
-//     }
-//     catch (err) {
-//         console.log(err);
-//         res.status(400).send(err);
-//     }
-// });
 
 
 // CHOPER TOUTES LES IMAGES
@@ -104,9 +84,10 @@ router.get('/images', async (req, res) => {
 });
 
 // CHOPER LES DONNEES D'UNE IMAGE
-router.get('/images/:id', async (req, res) => {
+router.get('/image/:id', async (req, res) => {
     try {
         const oneImage = await images.findById(req.params.id);
+        res.send(oneImage);
     }
     catch (err) {
         res.status(400).send(err);

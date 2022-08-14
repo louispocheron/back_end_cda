@@ -3,6 +3,7 @@
 // STOCKER LES IMAGES DANS LE BACK END
 
 const mongoose = require('mongoose');
+const commentaires = require('./commentaire');
 
 const imageSchema = new mongoose.Schema({
     name: {
@@ -28,8 +29,11 @@ const imageSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
-    }
-
+    },
+    commentaires: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'commentaire'
+    }]
 });
 
 module.exports = mongoose.model('images', imageSchema);
