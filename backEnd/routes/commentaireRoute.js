@@ -14,11 +14,11 @@ router.post('/commentaire/:imageId', async (req, res) => {
     const newCommentaire = await new commentaire({
         commentaire: req.body.commentaire,
         user: req.body.user,
-        image: mongoose.Types.ObjectId(req.params.imageId)
+        image: req.params.imageId
     });
     const updateImage = await images.findByIdAndUpdate(req.params.imageId, {
         $push: {
-            commentaire: newCommentaire.id
+            commentaires: newCommentaire.id
         }
     });
     try {
