@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const images = require('../model/images');
+const user = require('../model/user');
 // const { default: mongoose } = require('mongoose');
 const commentaire = require('../model/commentaire');
 const checkTokenMiddleware  = require('../token')
@@ -10,7 +11,7 @@ const checkTokenMiddleware  = require('../token')
 
 // POST A COMMENT ON AN IMAGE
 router.post('/commentaire/:imageId', async (req, res) => {
-    console.log(req.body.user);
+    // console.log(req.body.user);
     const newCommentaire = await new commentaire({
         commentaire: req.body.commentaire,
         user: req.body.user,
@@ -24,6 +25,7 @@ router.post('/commentaire/:imageId', async (req, res) => {
     try {
         const savedCommentaire = await newCommentaire.save();
         const savedImage = await updateImage.save();
+        console.log("bien posté !")
         res.send(savedCommentaire);
     }
     catch (err) {
@@ -47,10 +49,11 @@ router.get('/commentaires/:id', async (req, res) => {
 });
 
 // DELETE UN COMMENTAIRE
-router.delete('/commentaires/:id', async (req, res) => {
+router.delete('/commentaire/delete/:id', async (req, res) => {
     try{
+        console.log(req.params.id);
         const deletedCommentaire = await commentaire.findByIdAndDelete(req.params.id);
-        return res.send.json(deletedCommentaire);
+        return res.send(deletedCommentaire);
     }
     catch(err){
         res.status(400).send(err);
@@ -77,8 +80,15 @@ router.put('/commentaires/:id', async (req, res) => {
 
 // CHERCHE TOUT LES COMMENTAIRES D'UNE IMAGE DONNEE
 router.get('/commentaires/image/:id', async (req, res) => {
-    const coms = await images.findById(req.params.id).populate('commentaires');
+    const coms = await commentaire.find().where('image').equals(req.params.id);
+
+    const allUsers = coms.forEach(async (com) => {
+    const users = await user.findById(com.user);
+    });
+
+    // res.write(allUsers);
     res.send(coms);
+
 });
 
 

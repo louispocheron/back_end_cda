@@ -24,7 +24,7 @@ const checkTokenMiddleware = (req, res, next) => {
     // Véracité du token
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
         if (err) {
-            res.status(401).json({ message: 'Error. Bad token' })
+            res.status(401).json({ message: 'mauvais token' })
         } else {
             req.user = decodedToken;
             return next();

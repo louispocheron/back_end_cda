@@ -18,9 +18,11 @@ const imageSchema = new mongoose.Schema({
         min: 3,
         max: 1000
     },
-    // img: {
-    //     data: Buffer,
-    //     contentType: String
+    // like: {
+    //     type: number,
+    //     required: true,
+    //     min: 0,
+    //     default: 0,
     // },
     posted_at: {
         type: Date,

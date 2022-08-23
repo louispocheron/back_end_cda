@@ -27,7 +27,7 @@ const checkTokenMiddleware  = require('../token')
 // })
 
 
-
+    
 router.post('/images', checkTokenMiddleware,  async (req, res) => {
     fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
         if(err){
@@ -51,6 +51,7 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
             res.send(savedImage);
             }
             catch (err) {
+                console.log('2eme err');
                 console.log(err);
                 res.status(400).send(err);
             }
@@ -113,7 +114,6 @@ router.get('/srcImage/:id', async(req, res)=>{
 router.get('/srcImage', async(req, res)=>{
     try {
         const oneImage = await images.find();
-        console.log(oneImage);
         }
     catch (err) {
         res.status(400).send(err);
@@ -122,7 +122,7 @@ router.get('/srcImage', async(req, res)=>{
 
 
 // DELETE UNE IMAGE
-router.delete('/images/:id', async (req, res) => {
+router.delete('/images/:id', async(req, res) => {
     try {
         const deletedImage = await image.findByIdAndDelete(req.params.id);
         return res.send.json(deletedImage);
@@ -132,6 +132,8 @@ router.delete('/images/:id', async (req, res) => {
         res.status(400).send(err)
     }
 });
+
+
 
 // router.delete('/images/delete/all', async (req, res) => {
 //     try {
