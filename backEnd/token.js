@@ -5,7 +5,6 @@ const extractBearerToken = headerValue => {
     if (typeof headerValue !== 'string') {
         return false
     }
-
     const matches = headerValue.match(/(bearer)\s+(\S+)/i)
     return matches && matches[2]
 }
@@ -13,7 +12,6 @@ const extractBearerToken = headerValue => {
 /* Vérification du token */
 const checkTokenMiddleware = (req, res, next) => {
     // Récupération du 
-    console.log(req.headers);
     const token = req.headers.authorization && extractBearerToken(req.headers.authorization)
 
     // Présence d'un token
@@ -24,7 +22,9 @@ const checkTokenMiddleware = (req, res, next) => {
     // Véracité du token
     jwt.verify(token, process.env.TOKEN_SECRET, (err, decodedToken) => {
         if (err) {
-            res.status(401).json({ message: 'mauvais token' })
+            res.status(401).json({ 
+                message: 'mauvais token',
+             })
         } else {
             req.user = decodedToken;
             return next();

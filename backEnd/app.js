@@ -12,6 +12,7 @@ const checkTokenMiddleware  = require('./token')
 const authRoute = require('./routes/auth');
 const imageRoute = require('./routes/imageRoute');
 const commentaireRoute = require('./routes/commentaireRoute');
+const likeRoute = require('./routes/like');
 
 
 
@@ -37,6 +38,7 @@ app.use(fileUpload({
 // PAS POUR LE LOGIN CAR ON A PAS DE TOKEN AVANT 
 app.use('/api', authRoute);
 app.use('/api', imageRoute);
+app.use('/api', likeRoute);
 app.use('/api', commentaireRoute);
 
 

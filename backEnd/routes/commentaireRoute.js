@@ -4,7 +4,7 @@ const images = require('../model/images');
 const user = require('../model/user');
 // const { default: mongoose } = require('mongoose');
 const commentaire = require('../model/commentaire');
-const checkTokenMiddleware  = require('../token')
+const checkTokenMiddleware  = require('../token');
 
 
 
