@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -37,6 +36,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    likes:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'modelLike'
+    }],
     images: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'images'

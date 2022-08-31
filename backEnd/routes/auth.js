@@ -5,18 +5,18 @@ const jwt = require('jsonwebtoken');
 const { route } = require('express/lib/application');
 
 
-
 router.post('/user/register', async (req, res) => {
-    console.log(req.body);
+
     try {
+        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
         const newUser = await new UserModel({
             name: req.body.name,
             email: req.body.email,
-            password: hashedPassword
-    
+            password: hashedPassword,
+            
         });
 
         // check if user already exist
@@ -32,12 +32,13 @@ router.post('/user/register', async (req, res) => {
                     error: 'un utilisateur utilise deja ce nom'
             });
         }
-
         // PERSIT LE USER DANS LA BDD
         const savedUser = await newUser.save();
+        let token = jwt.sign({ id: savedUser._id.toString() }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
         return res.status(200).json({
             message: 'utilisateur enregistré avec succes',
-            user: savedUser
+            user: savedUser,
+            token: token
         }); 
     }
     catch (err) {   
@@ -117,10 +118,10 @@ router.post("/login", async (req, res) => {
 });
 
 
-
-router.get('/user/test/:id', async(req, res) => {
+// DONNEES D'UN USER 
+router.get('/user/data/:id', async(req, res) => {
     try {
-        const oneUser = await UserModel.findOne({ _id: req.params.id });
+        const oneUser = await UserModel.findById(req.params.id).populate('likes');
         res.send(oneUser);
         }
         catch (err) {
@@ -129,7 +130,6 @@ router.get('/user/test/:id', async(req, res) => {
         }
 });
 
-            
 
 
 module.exports = router;

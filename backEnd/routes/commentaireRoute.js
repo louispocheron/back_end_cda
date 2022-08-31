@@ -8,7 +8,6 @@ const checkTokenMiddleware  = require('../token');
 
 
 
-
 // POST A COMMENT ON AN IMAGE
 router.post('/commentaire/:imageId', async (req, res) => {
     // console.log(req.body.user);
@@ -34,8 +33,6 @@ router.post('/commentaire/:imageId', async (req, res) => {
     }
 });
 
-
-
 // CHOPER UN COMMENTAIRE PAR ID
 router.get('/commentaires/:id', async (req, res) => {
     try{
@@ -60,6 +57,7 @@ router.delete('/commentaire/delete/:id', async (req, res) => {
     }
 });
 
+
 // EDIT UN COMMENTAIRE
 router.put('/commentaires/:id', async (req, res) => {
     try{
@@ -81,13 +79,16 @@ router.put('/commentaires/:id', async (req, res) => {
 // CHERCHE TOUT LES COMMENTAIRES D'UNE IMAGE DONNEE
 router.get('/commentaires/image/:id', async (req, res) => {
     const coms = await commentaire.find().where('image').equals(req.params.id);
+    
 
-    const allUsers = coms.forEach(async (com) => {
-    const users = await user.findById(com.user);
-    });
+        const test =  []
+        for(let i = 0; i < coms.length; i++){
+            test.push(await commentaire.findById(coms[i]._id).populate('user'))
+        }
+    
 
     // res.write(allUsers);
-    res.send(coms);
+    res.send({ Commentaires: test});
 
 });
 

@@ -8,25 +8,6 @@ const path = require('path');
 const fs = require("fs");
 const checkTokenMiddleware  = require('../token')
 
-
-
-
-// const storage = multer.diskStorage({
-
-//     destination: (req, file, cb) => {
-//         cb(null, '../public/images');
-//     },
-//     filename: (req, file, cb) => {
-//         console.log(file);
-//         cb(null, path.extname(file.originalname));
-//     }
-// })
-
-// const upload = multer ({
-//     storage: storage
-// })
-
-
     
 router.post('/images', checkTokenMiddleware,  async (req, res) => {
     fs.appendFileSync('./public/images/' + req.files.file.name, req.files.file.data, (err) => {
@@ -72,12 +53,12 @@ router.get('/image/commentaires/:id', async (req, res) => {
 });
 
 
-
 // CHOPER TOUTES LES IMAGES
 router.get('/images', async (req, res) => {
     try {
-        const AllImageUser = await images.find().populate('user');
-        res.send(AllImageUser);
+        const allImageUser = await images.find().populate('user');
+        // res.json({imageUser: AllImageUser, imageLike: allImageLike});
+        res.send(allImageUser);
     }
     catch (err) {
         res.status(400).send(err);
@@ -119,7 +100,6 @@ router.get('/srcImage', async(req, res)=>{
         res.status(400).send(err);
     }
 })
-
 
 // DELETE UNE IMAGE
 router.delete('/images/:id', async(req, res) => {

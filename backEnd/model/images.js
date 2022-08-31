@@ -18,12 +18,6 @@ const imageSchema = new mongoose.Schema({
         min: 3,
         max: 1000
     },
-    // like: {
-    //     type: number,
-    //     required: true,
-    //     min: 0,
-    //     default: 0,
-    // },
     posted_at: {
         type: Date,
         default: Date.now
@@ -34,7 +28,7 @@ const imageSchema = new mongoose.Schema({
     },
     likes:[{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'likes'
+        ref: 'modelLike'
     }],
     commentaires: [{
         type: mongoose.Schema.Types.ObjectId,

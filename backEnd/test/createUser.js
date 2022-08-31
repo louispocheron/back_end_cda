@@ -7,7 +7,7 @@ const assert = require('assert');
 mongoose.Promise = global.Promise;
 const MONGODB_URI = process.env.DATABASE_URL;
 mongoose.connect(MONGODB_URI);
-  
+
 mongoose.connection
     .once('open', () => console.log('Connected!'))
     .on('error', (error) => {
