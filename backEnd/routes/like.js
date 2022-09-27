@@ -61,7 +61,10 @@ router.post('/like/:imageId/', async(req, res) =>{
             await RemoveLikeFromUser.save();
             await RemoveLikeFromImage.save();
 
-            res.send({ type: 'deleted'})
+            res.send({
+                 type: 'deleted',
+                 like: newLikeId
+                })
             // // console.log(" b suprr") 
     }
 })

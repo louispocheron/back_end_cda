@@ -27,6 +27,13 @@ db.once('open', () => {
 });
 
 
+// parent 
+// <composantFils :maProps="maValeur" @ajoutElement="addEltToArray"/>
+// enfant
+// emit('ajoutElement', { mesData })
+
+
+
 app.use(cors());
 // LE MIDDLEWARE DE L'API
 app.use(express.json());

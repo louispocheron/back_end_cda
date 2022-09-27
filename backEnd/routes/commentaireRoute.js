@@ -23,9 +23,10 @@ router.post('/commentaire/:imageId', async (req, res) => {
     });
     try {
         const savedCommentaire = await newCommentaire.save();
-        const savedImage = await updateImage.save();
+        const commentairePopulated = await commentaire.findById(savedCommentaire._id).populate('user');
+        await updateImage.save();
         console.log("bien posté !")
-        res.send(savedCommentaire);
+        res.send(commentairePopulated);
     }
     catch (err) {
         console.log(err);
@@ -46,10 +47,15 @@ router.get('/commentaires/:id', async (req, res) => {
 });
 
 // DELETE UN COMMENTAIRE
-router.delete('/commentaire/delete/:id', async (req, res) => {
+router.delete('/commentaire/delete/:id/:imageId', async (req, res) => {
     try{
-        console.log(req.params.id);
+        
         const deletedCommentaire = await commentaire.findByIdAndDelete(req.params.id);
+        await images.findByIdAndUpdate(req.params.imageId, {
+            $pull: {
+                commentaires: req.params.id
+            }
+        })
         return res.send(deletedCommentaire);
     }
     catch(err){
@@ -81,14 +87,14 @@ router.get('/commentaires/image/:id', async (req, res) => {
     const coms = await commentaire.find().where('image').equals(req.params.id);
     
 
-        const test =  []
+        const arrayComms =  []
         for(let i = 0; i < coms.length; i++){
-            test.push(await commentaire.findById(coms[i]._id).populate('user'))
+            arrayComms.push(await commentaire.findById(coms[i]._id).populate('user'))
         }
     
 
     // res.write(allUsers);
-    res.send({ Commentaires: test});
+    res.send(arrayComms);
 
 });
 

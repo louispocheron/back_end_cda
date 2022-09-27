@@ -18,7 +18,7 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
     // console.log(checkTokenMiddleware);
     const newImage = await new images({
             name: req.files.file.name,
-            user: mongoose.Types.ObjectId(req.user.id)
+            user: mongoose.Types.ObjectId(req.user.id)  
             // user: req.body.user
         });
     const updateUser = await user.findByIdAndUpdate(req.user.id, {

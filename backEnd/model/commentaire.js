@@ -17,7 +17,7 @@ const commentaireSchema = new mongoose.Schema({
     image: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'image'
-    }
-});
+    }   
+});     
 
 module.exports = mongoose.model('commentaire', commentaireSchema);

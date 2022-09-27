@@ -3,12 +3,11 @@ const UserModel = require('../model/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { route } = require('express/lib/application');
-
+const fs = require('fs')
 
 router.post('/user/register', async (req, res) => {
-
+    const img = fs.readFileSync('./public/profilPic/default_avatar.jpg')
     try {
-        
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -16,8 +15,12 @@ router.post('/user/register', async (req, res) => {
             name: req.body.name,
             email: req.body.email,
             password: hashedPassword,
-            
-        });
+            profil_picture: fs.appendFileSync('./public/profilPic/default_avatar.jpg', img, (err) =>{
+                if(err){
+                    console.log(err)
+                }
+            })
+        }); 
 
         // check if user already exist
         const userExist = await UserModel.findOne({ email: req.body.email });
@@ -129,6 +132,63 @@ router.get('/user/data/:id', async(req, res) => {
             res.status(500).send(err)
         }
 });
+
+// follow a user
+router.post('/follow/:id', async(req, res) => {
+    const currentUser = await UserModel.findById(req.body.user);
+
+  function isAlreadyFollowing(){
+    return currentUser.following.find(el => el === req.params.id)
+  }
+  
+
+    if (isAlreadyFollowing() == undefined){
+        console.log("if");
+        const updateFollowedUser = await UserModel.findByIdAndUpdate(req.params.id, {
+            $push: {
+                followers: req.body.user
+            },
+        })
+        const updateFollowingUser = await UserModel.findByIdAndUpdate(req.body.user, {
+            $push: {
+                following: req.params.id
+            }
+        })
+        try{
+            await updateFollowedUser.save();
+            await updateFollowingUser.save();
+            res.send('created')
+        }
+        catch(err){
+            console.log(err)
+            console.log('une erreur est survenu')
+        }
+    } else {
+        
+        try{
+
+            const removeFollowing = await UserModel.findByIdAndUpdate(req.body.user, {
+                $pull: {
+                    following: req.params.id
+                }
+            })
+
+            const removeFollower = await UserModel.findByIdAndUpdate(req.params.id, {
+                $pull: {
+                    followers: req.body.user
+                }
+            })
+
+            await removeFollower.save();
+            await removeFollowing.save();
+            res.send('deleted');
+            
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+})
 
 
 
