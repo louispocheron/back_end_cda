@@ -2,10 +2,13 @@ const router = require('express').Router();
 const images = require('../model/images');
 const user = require('../model/user.js')
 const likeModel = require('../model/liked');
+const { findByIdAndUpdate } = require('../model/user.js');
 
 
 // ON LIKE UNE IMAGE
 router.post('/like/:imageId/', async(req, res) =>{
+
+    const userLike = await user.findById(req.body.userId)
 
     const isLikable = await likeModel.find({
         user: req.body.userId,
@@ -13,7 +16,6 @@ router.post('/like/:imageId/', async(req, res) =>{
     })
     
     if(isLikable.length == 0){
-        console.log('create');
         const newLike = await new likeModel({
             user: req.body.userId, 
             image: req.params.imageId
@@ -27,11 +29,20 @@ router.post('/like/:imageId/', async(req, res) =>{
             $push: {
                 likes: newLike.id
             }
+        });
+        const sendNotification = await user.findByIdAndUpdate(req.body.userImage._id, {
+            $push: {
+                notification: ({
+                    text :`${userLike.name} a aimé votre photo`, 
+                    image: req.params.imageId
+                })
+            }
         })
         try{
             const saveLike = await newLike.save();
             const savedImage = await updateImage.save();
             const saveUser = await updateUser.save();
+            await sendNotification.save();
             res.send({
                 type: 'created',
                 like: saveLike
@@ -65,7 +76,6 @@ router.post('/like/:imageId/', async(req, res) =>{
                  type: 'deleted',
                  like: newLikeId
                 })
-            // // console.log(" b suprr") 
     }
 })
 

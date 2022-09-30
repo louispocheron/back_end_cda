@@ -143,7 +143,6 @@ router.post('/follow/:id', async(req, res) => {
   
 
     if (isAlreadyFollowing() == undefined){
-        console.log("if");
         const updateFollowedUser = await UserModel.findByIdAndUpdate(req.params.id, {
             $push: {
                 followers: req.body.user
@@ -166,23 +165,19 @@ router.post('/follow/:id', async(req, res) => {
     } else {
         
         try{
-
             const removeFollowing = await UserModel.findByIdAndUpdate(req.body.user, {
                 $pull: {
                     following: req.params.id
                 }
             })
-
             const removeFollower = await UserModel.findByIdAndUpdate(req.params.id, {
                 $pull: {
                     followers: req.body.user
                 }
             })
-
             await removeFollower.save();
             await removeFollowing.save();
             res.send('deleted');
-            
         }
         catch(err){
             console.log(err);
@@ -190,6 +185,22 @@ router.post('/follow/:id', async(req, res) => {
     }
 })
 
+
+// NOTIFICATION ROUTES BELOW
+router.post('/notification/delete/:id', async(req, res) => {
+    const RemoveNotification = await UserModel.findByIdAndUpdate(req.params.id, {
+        $set: {
+            notification: []
+        }
+    })
+    try{
+        await RemoveNotification.save();
+        res.send('notifications supprimé');
+    }
+    catch(error){
+        console.log(error);
+    }
+})
 
 
 module.exports = router;
