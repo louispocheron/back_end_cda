@@ -10,6 +10,8 @@ const checkTokenMiddleware  = require('../token');
 
 // POST A COMMENT ON AN IMAGE
 router.post('/commentaire/:imageId', async (req, res) => {
+    const userPoster = await user.findById(req.body.user)
+    const userNotified = await images.findById(req.params.imageId)
     // console.log(req.body.user);
     const newCommentaire = await new commentaire({
         commentaire: req.body.commentaire,
@@ -24,6 +26,16 @@ router.post('/commentaire/:imageId', async (req, res) => {
     try {
         const savedCommentaire = await newCommentaire.save();
         const commentairePopulated = await commentaire.findById(savedCommentaire._id).populate('user');
+        const createNotification = await user.findByIdAndUpdate(userNotified.user, {
+            $push: {
+                notification: ({
+                    profil_pic: userPoster.profil_picture,
+                    text : `${userPoster.name} a commenté votre photo`,
+                    image: req.params.imageId
+                })
+            }
+        })
+        await createNotification.save();    
         await updateImage.save();
         console.log("bien posté !")
         res.send(commentairePopulated);
@@ -32,6 +44,8 @@ router.post('/commentaire/:imageId', async (req, res) => {
         console.log(err);
         res.status(400).send(err);
     }
+     
+
 });
 
 // CHOPER UN COMMENTAIRE PAR ID

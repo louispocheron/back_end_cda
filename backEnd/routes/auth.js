@@ -143,6 +143,8 @@ router.post('/follow/:id', async(req, res) => {
   
 
     if (isAlreadyFollowing() == undefined){
+        const userNotified = await UserModel.findById(req.params.id);
+
         const updateFollowedUser = await UserModel.findByIdAndUpdate(req.params.id, {
             $push: {
                 followers: req.body.user
@@ -153,9 +155,19 @@ router.post('/follow/:id', async(req, res) => {
                 following: req.params.id
             }
         })
+        const notificationPush = await UserModel.findByIdAndUpdate(req.params.id, {
+            $push:{
+                notification: ({
+                    profil_pic: userNotified.profil_picture, 
+                    text : `${userNotified.name} s'est abonné a vous`,
+                    image : false,
+                })
+            }
+        })
         try{
             await updateFollowedUser.save();
             await updateFollowingUser.save();
+            await notificationPush.save();
             res.send('created')
         }
         catch(err){

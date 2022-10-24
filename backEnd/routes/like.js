@@ -33,7 +33,8 @@ router.post('/like/:imageId/', async(req, res) =>{
         const sendNotification = await user.findByIdAndUpdate(req.body.userImage._id, {
             $push: {
                 notification: ({
-                    text :`${userLike.name} a aimé votre photo`, 
+                    profil_pic: userLike.profil_pic,
+                    text : `${userLike.name} a aimé votre photo`,
                     image: req.params.imageId
                 })
             }

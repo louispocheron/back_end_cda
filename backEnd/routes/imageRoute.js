@@ -20,7 +20,7 @@ router.post('/images', checkTokenMiddleware,  async (req, res) => {
             name: req.files.file.name,
             user: mongoose.Types.ObjectId(req.user.id)  
             // user: req.body.user
-        });
+        }).populate('user');
     const updateUser = await user.findByIdAndUpdate(req.user.id, {
         $push: {
             images: newImage.id
@@ -102,12 +102,11 @@ router.get('/srcImage', async(req, res)=>{
 })
 
 // DELETE UNE IMAGE
-router.delete('/images/:id', async(req, res) => {
+router.delete('/image/:id', async(req, res) => {
     try {
-        const deletedImage = await image.findByIdAndDelete(req.params.id);
-        return res.send.json(deletedImage);
+        const deletedImage = await images.findByIdAndDelete(req.params.id);
+        return res.send(deletedImage);
     }
-
     catch (err) {
         res.status(400).send(err)
     }
